@@ -1,0 +1,7 @@
+Modelo,Balanceamento,Configuração,F1 macro (média),Revocação (média),Acurácia (média)
+Random Forest,sem,"class_weight=None, max_depth=20, min_samples_leaf=1, n_estimators=100",0.6849864532890878,0.6749630361074817,0.7728162283540703
+Random Forest,com,"class_weight=balanced, max_depth=None, min_samples_leaf=5, n_estimators=300",0.721340280789093,0.7268200854595799,0.7609406340149754
+SVM,sem,"C=1, class_weight=None, kernel=linear",0.7101987242267247,0.6999516746292345,0.7790329153980774
+SVM,com,"C=10, class_weight=balanced, gamma=auto, kernel=rbf",0.7208349184548523,0.728002266530704,0.7615111995461047
+XGBoost,sem,"learning_rate=0.1, max_depth=3, n_estimators=300",0.7193640758341397,0.7092087037287189,0.784116062938013
+XGBoost,com,"learning_rate=0.1, max_depth=3, n_estimators=300, sample_weight=balanced",0.7373384162957634,0.7434407011705478,0.7764845491813104
