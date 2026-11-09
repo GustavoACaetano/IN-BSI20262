@@ -4,6 +4,10 @@ Base: **Predict Students' Dropout and Academic Success** (UCI id 697)
 Modelos: **KNN, SVM, Random Forest e XGBoost**
 Entrega do artigo: **19/11 às 23h59** (AVA, um integrante envia)
 
+> As tarefas estão **na ordem de execução**. Cada tarefa depende das anteriores, exceto onde indicado:
+> - As seções **5, 6, 7 e 8** (modelos) podem ser feitas em paralelo, uma por integrante, depois que a seção 4 estiver pronta.
+> - As tarefas **11.1, 11.2 e 11.3** do artigo não dependem do código e podem começar a qualquer momento.
+
 ---
 
 ## 0. Decisões tomadas
@@ -16,12 +20,14 @@ Entrega do artigo: **19/11 às 23h59** (AVA, um integrante envia)
 
 ---
 
-## 1. Estrutura / setup
+## 1. Setup
 
-- [ ] **1.1** Criar `trabalho.ipynb` com seções em Markdown: EDA, Pré-processamento, Divisão dos dados, KNN, SVM, Random Forest, XGBoost, Comparação.
-- [ ] **1.2** Concentrar todos os imports em uma célula no topo e remover os vários `!pip3 install` espalhados (as dependências vão para o `requirements.txt`, ver 10.1).
-- [ ] **1.3** Definir `RANDOM_STATE = 42` e usá-lo em todos os pontos com aleatoriedade (split, CV, RF, XGBoost).
-- [ ] **1.4** Carregar a base via `ucimlrepo.fetch_ucirepo(id=697)`, reaproveitando a célula já existente nos notebooks.
+- [ ] **1.1** Criar o `requirements.txt` (ucimlrepo, pandas, numpy, scikit-learn, matplotlib, seaborn, xgboost) e cada integrante instalar com `pip install -r requirements.txt`.
+- [ ] **1.2** Criar `trabalho.ipynb` com as seções em Markdown: EDA, Pré-processamento, Divisão dos dados, KNN, SVM, Random Forest, XGBoost, Comparação.
+- [ ] **1.3** Colocar todos os imports em uma célula no topo, sem `!pip3 install` no notebook.
+- [ ] **1.4** Definir `RANDOM_STATE = 42` e usá-lo em todos os pontos com aleatoriedade (split, CV, RF, XGBoost).
+- [ ] **1.5** Carregar a base via `ucimlrepo.fetch_ucirepo(id=697)`, reaproveitando a célula dos notebooks atuais.
+- [ ] **1.6** Transformar o alvo em 1D logo após o carregamento: `y = y.squeeze()` (corrige o `DataConversionWarning` do KNN).
 
 ## 2. Análise exploratória (Especificação 3.1)
 
@@ -34,90 +40,91 @@ Entrega do artigo: **19/11 às 23h59** (AVA, um integrante envia)
 
 ## 3. Pré-processamento (Especificação 3.2)
 
-- [ ] **3.1** Tratar os ausentes e as inconsistências encontrados em 2.3–2.4. Se não houver nenhum, registrar isso explicitamente no notebook e no artigo.
-- [ ] **3.2** Classificar as colunas em:
+- [ ] **3.1** Tratar os ausentes, duplicados e inconsistências encontrados em 2.3–2.4. Se não houver nenhum, registrar isso explicitamente no notebook e no artigo.
+- [ ] **3.2** Verificar e remover identificadores ou atributos não preditivos, e justificar a decisão no artigo (mesmo que nenhum seja removido).
+- [ ] **3.3** Classificar as colunas restantes em:
   - nominais codificadas como inteiro (Marital status, Application mode, Course, Previous qualification, Nationality, Mother's/Father's qualification, Mother's/Father's occupation, Daytime/evening attendance…);
   - binárias (Displaced, Debtor, Gender, Scholarship holder, International…);
   - numéricas (notas, idade, unidades curriculares, taxa de desemprego, inflação, PIB…).
-- [ ] **3.3** Aplicar one-hot nas nominais via `ColumnTransformer` (`OneHotEncoder(handle_unknown='ignore', min_frequency=...)`), agrupando as categorias raras para limitar a dimensionalidade.
-- [ ] **3.4** Normalizar as numéricas com `StandardScaler` **dentro do Pipeline**.
-- [ ] **3.5** Verificar e remover identificadores ou atributos não preditivos, e justificar a decisão no artigo (mesmo que nenhum seja removido).
-- [ ] **3.6** Transformar o alvo em 1D com `y = y.squeeze()` (corrige o `DataConversionWarning` do KNN). Para o XGBoost, aplicar `LabelEncoder` no alvo.
-- [ ] **3.7** Encapsular tudo em uma função ou objeto `preprocessador` reutilizado pelos 4 modelos.
+- [ ] **3.4** Codificar o alvo com `LabelEncoder` (uma vez, para todos os modelos, porque o XGBoost exige rótulos numéricos). Guardar o `le` e usar `le.classes_` como nomes das classes nos relatórios e nas matrizes de confusão.
+- [ ] **3.5** Montar o `preprocessador` com `ColumnTransformer`:
+  - nominais → `OneHotEncoder(handle_unknown='ignore', min_frequency=...)`, agrupando as categorias raras;
+  - numéricas → `StandardScaler`;
+  - binárias → `passthrough`.
+
+  Ele só é ajustado dentro do `Pipeline` de cada modelo, nunca na base inteira.
 
 ## 4. Divisão dos dados e utilitários (Especificação 3.5 / 3.6)
 
 - [ ] **4.1** Fazer o split `train_test_split(X, y, test_size=0.2, stratify=y, random_state=RANDOM_STATE)`, reaproveitando `svm.ipynb`.
-- [ ] **4.2** Criar **um único** `cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)` e usá-lo em todos os `GridSearchCV`.
-- [ ] **4.3** Criar a função `avaliar(modelo, nome)` que, no conjunto de teste, calcula acurácia, precisão, recall e F1 (macro e por classe), plota a matriz de confusão e devolve um dicionário com as métricas.
-- [ ] **4.4** Usar `GridSearchCV` com `scoring` em várias métricas (`accuracy`, `precision_macro`, `recall_macro`, `f1_macro`) e `refit='f1_macro'`, para guardar todas as métricas da CV.
+- [ ] **4.2** Criar **um único** `cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)`, que será usado em todos os `GridSearchCV`.
+- [ ] **4.3** Definir o padrão de busca para todos os modelos: `GridSearchCV(pipeline, grid, cv=cv, scoring=['accuracy', 'precision_macro', 'recall_macro', 'f1_macro'], refit='f1_macro', n_jobs=-1)`.
+- [ ] **4.4** Criar a função `avaliar(modelo, nome)` que, no conjunto de teste, calcula acurácia, precisão, recall e F1 (macro e por classe), plota a matriz de confusão com `le.classes_` e devolve um dicionário com as métricas.
+- [ ] **4.5** Criar a função `tabela_cv(grid_search, nome)` que transforma o `cv_results_` em um DataFrame (parâmetros + média ± desvio de cada métrica), para usar na seção 9.
 
-## 5. Ajustes no KNN (a partir de `knn.ipynb`)
+## 5. KNN (migrar `knn.ipynb`) — paralelo com 6, 7 e 8
 
-- [ ] **5.1** Trocar o split atual (sem `stratify` e sem `random_state`) pelo split comum de 4.1.
-- [ ] **5.2** Trocar o loop manual por `Pipeline(preprocessador, KNeighborsClassifier)` + `GridSearchCV` com o `cv` compartilhado:
+- [ ] **5.1** Montar `Pipeline(preprocessador, KNeighborsClassifier)` + `GridSearchCV` (padrão de 4.3), substituindo o loop manual e o split antigo:
   - `n_neighbors`: 3, 5, 7, 9, 11, 15…
   - `weights`: `uniform`, `distance`
   - `metric`: `euclidean`, `manhattan`
-- [ ] **5.3** Corrigir os problemas atuais: o `classification_report` só mostra o último `k` do loop; o scaler está fora do pipeline; o `y` está em formato de coluna.
-- [ ] **5.4** Refazer o gráfico "métrica × k" a partir do `cv_results_` (F1 macro médio na CV, uma curva por `weights`/`metric`).
-- [ ] **5.5** Avaliar o melhor modelo com `avaliar()`.
+- [ ] **5.2** Fazer o gráfico "F1 macro × k" a partir do `cv_results_` (uma curva por `weights`/`metric`).
+- [ ] **5.3** Avaliar o melhor modelo com `avaliar()` e gerar a tabela com `tabela_cv()`.
 
-## 6. Ajustes no SVM (a partir de `svm.ipynb`)
+## 6. SVM (migrar `svm.ipynb`) — paralelo com 5, 7 e 8
 
-- [ ] **6.1** Trocar o `StandardScaler` isolado pelo `preprocessador` comum (com one-hot).
-- [ ] **6.2** Adicionar `classifier__class_weight: [None, 'balanced']` ao grid (manter linear/rbf, `C` e `gamma`).
-- [ ] **6.3** Usar o `cv` e o split comuns e avaliar com `avaliar()`.
-- [ ] **6.4** Guardar o `cv_results_` em um DataFrame para a tabela de configurações (ver 9.2).
+- [ ] **6.1** Montar `Pipeline(preprocessador, SVC)` + `GridSearchCV` (padrão de 4.3), substituindo o `StandardScaler` isolado:
+  - `kernel`: `linear`, `rbf`
+  - `C`: 0.1, 1, 10
+  - `gamma` (só rbf): `scale`, `auto`
+  - `class_weight`: None, `balanced`
+- [ ] **6.2** Avaliar o melhor modelo com `avaliar()` e gerar a tabela com `tabela_cv()`.
 
-## 7. Random Forest (novo)
+## 7. Random Forest (novo) — paralelo com 5, 6 e 8
 
-- [ ] **7.1** Montar `Pipeline(preprocessador, RandomForestClassifier(random_state=RANDOM_STATE))` + `GridSearchCV` com o `cv` comum:
+- [ ] **7.1** Montar `Pipeline(preprocessador, RandomForestClassifier(random_state=RANDOM_STATE))` + `GridSearchCV` (padrão de 4.3):
   - `n_estimators`: 100, 300
   - `max_depth`: None, 10, 20
   - `min_samples_leaf`: 1, 5
   - `class_weight`: None, `balanced`
-- [ ] **7.2** Avaliar o melhor modelo com `avaliar()`.
+- [ ] **7.2** Avaliar o melhor modelo com `avaliar()` e gerar a tabela com `tabela_cv()`.
 - [ ] **7.3** Fazer um gráfico com as importâncias dos atributos (top 15) para a discussão no artigo.
 
-## 8. XGBoost (novo)
+## 8. XGBoost (novo) — paralelo com 5, 6 e 7
 
-- [ ] **8.1** Adicionar `xgboost` às dependências e treinar com o alvo codificado (3.6).
-- [ ] **8.2** Montar `Pipeline(preprocessador, XGBClassifier(objective='multi:softprob', random_state=RANDOM_STATE))` + `GridSearchCV` com o `cv` comum:
+- [ ] **8.1** Montar `Pipeline(preprocessador, XGBClassifier(objective='multi:softprob', random_state=RANDOM_STATE))` + `GridSearchCV` (padrão de 4.3):
   - `n_estimators`: 100, 300
   - `max_depth`: 3, 6
   - `learning_rate`: 0.05, 0.1
-- [ ] **8.3** Testar o tratamento do desbalanceamento com `sample_weight = compute_sample_weight('balanced', y_train)` passado no `fit`, comparando com e sem pesos.
-- [ ] **8.4** Decodificar as predições para os rótulos originais e avaliar com `avaliar()`.
+- [ ] **8.2** Rodar a busca duas vezes: sem pesos e com `fit(..., classifier__sample_weight=compute_sample_weight('balanced', y_train))`, para comparar o efeito do balanceamento.
+- [ ] **8.3** Avaliar o melhor modelo com `avaliar()` e gerar as tabelas com `tabela_cv()`.
 
-## 9. Comparação e resultados (Especificação 3.6)
+## 9. Comparação e resultados (Especificação 3.6) — depende de 5, 6, 7 e 8
 
 - [ ] **9.1** Montar a tabela consolidada com a melhor configuração de cada modelo: F1 macro médio ± desvio na CV e acurácia, precisão, recall e F1 no teste.
-- [ ] **9.2** Montar a tabela com todas as configurações testadas (pelo menos 2 por modelo) e suas métricas na CV.
+- [ ] **9.2** Montar a tabela com todas as configurações testadas (pelo menos 2 por modelo) e suas métricas na CV, juntando as saídas de `tabela_cv()`.
 - [ ] **9.3** Montar uma figura com as 4 matrizes de confusão lado a lado e um gráfico de barras comparando as métricas entre os modelos.
-- [ ] **9.4** Exportar as figuras (`figuras/*.png`) e as tabelas (`resultados/*.csv`) para usar no artigo.
-- [ ] **9.5** Escrever a interpretação dos resultados no notebook: melhor modelo, efeito do `class_weight`, desempenho na classe **Enrolled** (a mais difícil) e principais confusões entre classes.
+- [ ] **9.4** Escrever a interpretação dos resultados no notebook: melhor modelo, efeito do `class_weight`/`sample_weight`, desempenho na classe **Enrolled** (a mais difícil) e principais confusões entre classes.
 
-## 10. Repositório / README
+## 10. Fechamento do notebook e do repositório
 
-- [ ] **10.1** Criar o `requirements.txt` (ucimlrepo, pandas, numpy, scikit-learn, matplotlib, seaborn, xgboost).
-- [ ] **10.2** Criar o `README.md` com o objetivo, a base (link UCI), como executar e a estrutura do repositório.
-- [ ] **10.3** Depois da migração para `trabalho.ipynb`, remover `knn.ipynb`/`svm.ipynb` (ou movê-los para `rascunhos/`).
-- [ ] **10.4** Limpar os outputs ruidosos (logs de `pip install`, warnings).
-- [ ] **10.5** Executar o notebook do zero ("Restart & Run All"), conferir se os resultados se reproduzem e confirmar que batem com o que está no artigo.
-- [ ] **10.6** Deixar o repositório público (ou acessível ao professor) e pegar o link para o artigo.
+- [ ] **10.1** Executar o notebook do zero ("Restart & Run All") e confirmar que os resultados se reproduzem. **Estes números são os que vão para o artigo.**
+- [ ] **10.2** Exportar as figuras (`figuras/*.png`) e as tabelas (`resultados/*.csv`) geradas nessa execução.
+- [ ] **10.3** Remover `knn.ipynb`/`svm.ipynb` (ou movê-los para `rascunhos/`) e limpar os outputs ruidosos (warnings, logs).
+- [ ] **10.4** Criar o `README.md` com o objetivo, a base (link UCI), como executar e a estrutura do repositório.
+- [ ] **10.5** Fazer o commit/push final e deixar o repositório público (ou acessível ao professor).
 
 ## 11. Artigo IEEE (≤ 6 páginas, PDF, modelo IEEE Transactions do AVA)
 
-- [ ] **11.1** Título e identificação dos autores.
-- [ ] **11.2** Resumo: problema, objetivo, metodologia, principais resultados e conclusões.
-- [ ] **11.3** Introdução: contexto de negócio (evasão no ensino superior), justificativa e objetivos.
-- [ ] **11.4** Referencial teórico: KNN, SVM, Random Forest e XGBoost, com referências bibliográficas.
-- [ ] **11.5** Metodologia: base, EDA, pré-processamento, divisão dos dados (hold-out + 5-fold), grids de hiperparâmetros e métricas.
-- [ ] **11.6** Resultados: tabelas (9.1/9.2), matrizes de confusão e gráficos, com a discussão dos modelos e das configurações.
-- [ ] **11.7** Conclusão: principais achados e trabalhos futuros.
+- [ ] **11.1** Título e identificação dos autores. *(pode começar a qualquer momento)*
+- [ ] **11.2** Introdução: contexto de negócio (evasão no ensino superior), justificativa e objetivos. *(pode começar a qualquer momento)*
+- [ ] **11.3** Referencial teórico: KNN, SVM, Random Forest e XGBoost, com referências bibliográficas. *(pode começar a qualquer momento)*
+- [ ] **11.4** Metodologia: base, EDA, pré-processamento, divisão dos dados (hold-out + 5-fold), grids de hiperparâmetros e métricas. *(depende de 1–4)*
+- [ ] **11.5** Resultados: tabelas, matrizes de confusão e gráficos de 10.2, com a discussão dos modelos e das configurações. *(depende de 10.1)*
+- [ ] **11.6** Conclusão: principais achados e trabalhos futuros.
+- [ ] **11.7** Resumo: problema, objetivo, metodologia, principais resultados e conclusões (escrito por último, porque resume o artigo).
 - [ ] **11.8** Declaração do uso de IA (ferramentas e finalidade).
-- [ ] **11.9** Referências (base UCI, artigo original da base, scikit-learn, XGBoost, referências dos algoritmos).
-- [ ] **11.10** Incluir o link do GitHub no artigo.
-- [ ] **11.11** Revisão final: limite de 6 páginas, texto autoral (sem plágio), figuras de terceiros referenciadas, coerência entre o artigo e o notebook, e qualidade do texto.
+- [ ] **11.9** Referências: base UCI, artigo original da base, scikit-learn, XGBoost e referências dos algoritmos. Conferir se todas as citações do texto estão na lista.
+- [ ] **11.10** Incluir o link do GitHub (de 10.5) no artigo.
+- [ ] **11.11** Revisão final: limite de 6 páginas, texto autoral (sem plágio), figuras de terceiros referenciadas, números do artigo iguais aos do notebook, qualidade do texto.
 - [ ] **11.12** Exportar em PDF e enviar no AVA até **19/11 às 23h59** (um integrante).
