@@ -112,7 +112,7 @@ Entrega do artigo: **19/11 às 23h59** (AVA, um integrante envia)
 - [x] **10.2** Exportar as figuras (`figuras/*.png`) e as tabelas (`resultados/*.csv`) geradas nessa execução.
 - [x] **10.3** Remover `knn.ipynb`/`svm.ipynb` (ou movê-los para `rascunhos/`) e limpar os outputs ruidosos (warnings, logs).
 - [x] **10.4** Criar o `README.md` com o objetivo, a base (link UCI), como executar e a estrutura do repositório.
-- [ ] **10.5** Fazer o commit/push final e deixar o repositório público (ou acessível ao professor).
+- [x] **10.5** Fazer o commit/push final e deixar o repositório público (ou acessível ao professor).
 
 ## 11. Artigo IEEE (≤ 6 páginas, PDF, modelo IEEE Transactions do AVA)
 
