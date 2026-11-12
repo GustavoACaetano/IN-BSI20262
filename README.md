@@ -52,5 +52,6 @@ A execução completa leva alguns minutos, a maior parte na busca de hiperparâm
 | `resultados/` | Tabelas em CSV: resultados da validação cruzada por modelo, resumo dos modelos, efeito do balanceamento, importância dos atributos |
 | `rascunhos/` | Primeiras implementações de KNN e SVM, feitas para aprendizado (não fazem parte dos resultados) |
 | `requirements.txt` | Dependências Python |
-| `task.md` | Lista de tarefas do grupo |
+| `tasks.md` | Lista de tarefas do grupo |
 | `especificacao.md` | Enunciado do trabalho |
+| `declaracao-uso-ia.md` | Declaração de como a IA foi usada no desenvolvimento |

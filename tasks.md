@@ -116,15 +116,15 @@ Entrega do artigo: **19/11 às 23h59** (AVA, um integrante envia)
 
 ## 11. Artigo IEEE (≤ 6 páginas, PDF, modelo IEEE Transactions do AVA)
 
-- [ ] **11.1** Título e identificação dos autores. *(pode começar a qualquer momento)*
-- [ ] **11.2** Introdução: contexto de negócio (evasão no ensino superior), justificativa e objetivos. *(pode começar a qualquer momento)*
-- [ ] **11.3** Referencial teórico: KNN, SVM, Random Forest e XGBoost, com referências bibliográficas. *(pode começar a qualquer momento)*
-- [ ] **11.4** Metodologia: base, EDA, pré-processamento, divisão dos dados (hold-out + 5-fold), grids de hiperparâmetros e métricas. *(depende de 1–4)*
-- [ ] **11.5** Resultados: tabelas, matrizes de confusão e gráficos de 10.2, com a discussão dos modelos e das configurações. *(depende de 10.1)*
-- [ ] **11.6** Conclusão: principais achados e trabalhos futuros.
-- [ ] **11.7** Resumo: problema, objetivo, metodologia, principais resultados e conclusões (escrito por último, porque resume o artigo).
-- [ ] **11.8** Declaração do uso de IA (ferramentas e finalidade).
-- [ ] **11.9** Referências: base UCI, artigo original da base, scikit-learn, XGBoost e referências dos algoritmos. Conferir se todas as citações do texto estão na lista.
-- [ ] **11.10** Incluir o link do GitHub (de 10.5) no artigo.
-- [ ] **11.11** Revisão final: limite de 6 páginas, texto autoral (sem plágio), figuras de terceiros referenciadas, números do artigo iguais aos do notebook, qualidade do texto.
-- [ ] **11.12** Exportar em PDF e enviar no AVA até **19/11 às 23h59** (um integrante).
+- [x] **11.1** Título e identificação dos autores. *(pode começar a qualquer momento)*
+- [x] **11.2** Introdução: contexto de negócio (evasão no ensino superior), justificativa e objetivos. *(pode começar a qualquer momento)*
+- [x] **11.3** Referencial teórico: KNN, SVM, Random Forest e XGBoost, com referências bibliográficas. *(pode começar a qualquer momento)*
+- [x] **11.4** Metodologia: base, EDA, pré-processamento, divisão dos dados (hold-out + 5-fold), grids de hiperparâmetros e métricas. *(depende de 1–4)*
+- [x] **11.5** Resultados: tabelas, matrizes de confusão e gráficos de 10.2, com a discussão dos modelos e das configurações. *(depende de 10.1)*
+- [x] **11.6** Conclusão: principais achados e trabalhos futuros.
+- [x] **11.7** Resumo: problema, objetivo, metodologia, principais resultados e conclusões (escrito por último, porque resume o artigo).
+- [x] **11.8** Declaração do uso de IA (ferramentas e finalidade).
+- [x] **11.9** Referências: base UCI, artigo original da base, scikit-learn, XGBoost e referências dos algoritmos. Conferir se todas as citações do texto estão na lista.
+- [x] **11.10** Incluir o link do GitHub (de 10.5) no artigo.
+- [x] **11.11** Revisão final: limite de 6 páginas, texto autoral (sem plágio), figuras de terceiros referenciadas, números do artigo iguais aos do notebook, qualidade do texto.
+- [x] **11.12** Exportar em PDF e enviar no AVA até **19/11 às 23h59** (um integrante).
